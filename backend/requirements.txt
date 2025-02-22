@@ -1,0 +1,9 @@
+yt-dlp
+fastapi
+uvicorn
+motor
+pydantic
+python-dateutil
+aiohttp
+python-dotenv
+beautifulsoup4
