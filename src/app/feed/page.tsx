@@ -1,6 +1,6 @@
 "use"
 import { Suspense } from "react"
-// import { ClientFeed } from "@/components/feed-client"
+import { ClientFeed } from "@/components/feed-client"
 import { VideoSkeleton } from "@/components/video-skeleton"
 
 export default function FeedPage({
@@ -14,11 +14,8 @@ export default function FeedPage({
   return (
     <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
       <Suspense fallback={<VideoSkeleton />}>
-        {/* <ClientFeed initialPage={page} /> */}
-        <h2>
-          Working on it...
-        </h2>
+        <ClientFeed initialPage={1} />
       </Suspense>
     </div>
   )
-}
+} 

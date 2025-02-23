@@ -32,7 +32,7 @@ export function ClientFeed({ initialPage }: ClientFeedProps) {
     try {
       setLoading(true)
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/feed?page=${initialPage}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/feed/recommendations?page=${initialPage}`,
         {
           headers: {
             login: userId

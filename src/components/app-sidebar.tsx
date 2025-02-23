@@ -129,11 +129,11 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   // use router
-  const router = useRouter()
+  // const router = useRouter()
   const handleLogout = () => {
     // Delete youtube_user_id from local storage
     localStorage.removeItem("youtube_user_id")
-    router.push("/login")
+    // router.push("/login")
 
   }
   return (
