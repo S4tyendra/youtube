@@ -6,153 +6,136 @@ import {
   Bot,
   Command,
   Frame,
-  LifeBuoy,
+  Home,
+  LogOut,
   Map,
   PieChart,
-  Send,
-  Settings2,
   SquareTerminal,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+// import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  // SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Button } from "./ui/button"
+import { useRouter } from "next/navigation"
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
+      title: "Home",
+      url: "/feed",
+      icon: Home,
       isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
     },
     {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
+      title: "Subscriptions",
+      url: "/subscriptions",
       icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
     },
     {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
+      title: "History",
+      url: "/history",
       icon: PieChart,
     },
     {
-      name: "Travel",
-      url: "#",
+      title: "Playlists",
+      url: "/playlists",
+      icon: Frame,
+    },
+    {
+      title: "Watch Later",
+      url: "/watch-later",
+      icon: Bot,
+    },
+    {
+      title: "Liked",
+      url: "/liked",
       icon: Map,
+    },
+  ],
+  explore: [
+    {
+      name: "Explore",
+      url: "/explore",
+      icon: Frame,
+    },
+    {
+      name: "Trending",
+      url: "/trending",
+      icon: PieChart,
+    },
+    {
+      name: "Shopping",
+      url: "/shopping",
+      icon: Bot,
+    },
+    {
+      name: "Music",
+      url: "/music",
+      icon: Home,
+    },
+    {
+      name: "Films",
+      url: "/films",
+      icon: BookOpen,
+    },
+    {
+      name: "Live",
+      url: "/live",
+      icon: Map,
+    },
+    {
+      name: "Gaming",
+      url: "/gaming",
+      icon: Command,
+    },
+    {
+      name: "News",
+      url: "/news",
+      icon: Frame,
+    },
+    {
+      name: "Sport",
+      url: "/sport",
+      icon: Bot,
+    },
+    {
+      name: "Courses",
+      url: "/courses",
+      icon: BookOpen,
+    },
+    {
+      name: "Fashion & Beauty",
+      url: "/fashion-beauty",
+      icon: Home,
+    },
+    {
+      name: "Podcasts",
+      url: "/podcasts",
+      icon: SquareTerminal,
     },
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  // use router
+  const router = useRouter()
+  const handleLogout = () => {
+    // Delete youtube_user_id from local storage
+    localStorage.removeItem("youtube_user_id")
+    router.push("/login")
+
+  }
   return (
     <Sidebar
       className="top-[--header-height] !h-[calc(100svh-var(--header-height))]"
@@ -177,11 +160,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavProjects projects={data.explore} />
       </SidebarContent>
-      <SidebarFooter>
+      {/* <SidebarFooter>
         <NavUser user={data.user} />
+      </SidebarFooter> */}
+      <SidebarFooter>
+        <Button onClick={handleLogout} variant={"destructive"}>
+          <LogOut className="mr-2 h-4 w-4" />
+          Logout
+        </Button>
       </SidebarFooter>
     </Sidebar>
   )
