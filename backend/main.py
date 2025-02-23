@@ -7,6 +7,7 @@ from fastapi import Request
 import yt_dlp
 from feed.recommendations import recommendations_router
 from login import login_router, require_login
+from data.video import video_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -34,3 +35,4 @@ async def log_id_header(request: Request, call_next):
 
 app.include_router(login_router)
 app.include_router(recommendations_router, prefix="/feed")
+app.include_router(video_router)
