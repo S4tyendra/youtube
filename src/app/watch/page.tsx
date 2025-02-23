@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, useRef } from "react"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -62,6 +62,12 @@ export default function WatchPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [videoData, setVideoData] = useState<VideoData | null>(null)
+  
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const lastSyncTime = useRef<number>(0)
+  const isBuffering = useRef<boolean>(false)
+  const isSeeking = useRef<boolean>(false)
 
   const fetchVideoData = useCallback(async () => {
     if (!videoId) return
@@ -99,6 +105,108 @@ export default function WatchPage() {
   useEffect(() => {
     fetchVideoData()
   }, [fetchVideoData])
+
+  // Handle video-audio synchronization
+  useEffect(() => {
+    const videoElement = videoRef.current
+    const audioElement = audioRef.current
+
+    if (!videoElement || !audioElement) return
+
+    const syncAudioWithVideo = () => {
+      const now = Date.now()
+      // Only sync if enough time has passed since last sync (prevent too frequent syncs)
+      if (now - lastSyncTime.current > 1000) {
+        const timeDiff = Math.abs(videoElement.currentTime - audioElement.currentTime)
+        if (timeDiff > 0.3) {
+          audioElement.currentTime = videoElement.currentTime
+          lastSyncTime.current = now
+        }
+      }
+    }
+
+    const handlePlay = () => {
+      if (!isBuffering.current) {
+        audioElement.play().catch(() => {
+          // Handle play promise rejection
+        })
+      }
+    }
+
+    const handlePause = () => {
+      audioElement.pause()
+    }
+
+    const handleSeeking = () => {
+      isSeeking.current = true
+      audioElement.pause()
+    }
+
+    const handleSeeked = () => {
+      isSeeking.current = false
+      audioElement.currentTime = videoElement.currentTime
+      if (!videoElement.paused) {
+        audioElement.play().catch(() => {
+          // Handle play promise rejection
+        })
+      }
+    }
+
+    const handleWaiting = () => {
+      isBuffering.current = true
+      audioElement.pause()
+    }
+
+    const handlePlaying = () => {
+      isBuffering.current = false
+      if (!videoElement.paused) {
+        syncAudioWithVideo()
+        audioElement.play().catch(() => {
+          // Handle play promise rejection
+        })
+      }
+    }
+
+    const handleVolumeChange = () => {
+      audioElement.volume = videoElement.volume
+    }
+
+    const handleTimeUpdate = () => {
+      if (!isSeeking.current && !isBuffering.current) {
+        syncAudioWithVideo()
+      }
+    }
+
+    const handleEnded = () => {
+      audioElement.pause()
+      audioElement.currentTime = 0
+    }
+
+    videoElement.addEventListener("play", handlePlay)
+    videoElement.addEventListener("pause", handlePause)
+    videoElement.addEventListener("seeking", handleSeeking)
+    videoElement.addEventListener("seeked", handleSeeked)
+    videoElement.addEventListener("waiting", handleWaiting)
+    videoElement.addEventListener("playing", handlePlaying)
+    videoElement.addEventListener("volumechange", handleVolumeChange)
+    videoElement.addEventListener("timeupdate", handleTimeUpdate)
+    videoElement.addEventListener("ended", handleEnded)
+
+    // Set initial volume
+    audioElement.volume = videoElement.volume
+
+    return () => {
+      videoElement.removeEventListener("play", handlePlay)
+      videoElement.removeEventListener("pause", handlePause)
+      videoElement.removeEventListener("seeking", handleSeeking)
+      videoElement.removeEventListener("seeked", handleSeeked)
+      videoElement.removeEventListener("waiting", handleWaiting)
+      videoElement.removeEventListener("playing", handlePlaying)
+      videoElement.removeEventListener("volumechange", handleVolumeChange)
+      videoElement.removeEventListener("timeupdate", handleTimeUpdate)
+      videoElement.removeEventListener("ended", handleEnded)
+    }
+  }, [videoData])
 
   if (!videoId) {
     return (
@@ -144,7 +252,20 @@ export default function WatchPage() {
 
   const { data } = videoData
   const maxResThumbnail = data.thumbnails.find(thumb => thumb.id === "40")?.url || data.thumbnail
-  const bestFormat = data.formats.find(format => format.ext === "mp4" && format.height === 720) || data.formats[0]
+
+  // Get best quality video (acodec: "none") and audio streams
+  const videoStream = data.formats
+    .filter(format => format.acodec === "none" && format.ext === "mp4")
+    .sort((a, b) => (b.height || 0) - (a.height || 0))[0]
+
+  const audioStream = data.formats
+    .filter(format => format.vcodec === "none")
+    .sort((a, b) => (b.abr || 0) - (a.abr || 0))[0]
+
+  // Fallback to a format with both audio and video if separate streams aren't available
+  const fallbackFormat = data.formats
+    .filter(format => format.acodec !== "none" && format.vcodec !== "none")
+    .sort((a, b) => (b.height || 0) - (a.height || 0))[0]
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-7xl">
@@ -152,13 +273,25 @@ export default function WatchPage() {
         <div className="lg:col-span-2">
           <Card className="overflow-hidden">
             <AspectRatio ratio={16 / 9}>
-              {bestFormat && (
-                <video
-                  controls
-                  poster={maxResThumbnail}
-                  className="w-full h-full object-cover"
-                  src={bestFormat.url}
-                />
+              {(videoStream || fallbackFormat) && (
+                <>
+                  <video
+                    ref={videoRef}
+                    controls
+                    poster={maxResThumbnail}
+                    className="w-full h-full object-cover"
+                    src={videoStream?.url || fallbackFormat.url}
+                    preload="auto"
+                  />
+                  {videoStream && audioStream && (
+                    <audio
+                      ref={audioRef}
+                      src={audioStream.url}
+                      preload="auto"
+                      style={{ display: 'none' }}
+                    />
+                  )}
+                </>
               )}
             </AspectRatio>
           </Card>

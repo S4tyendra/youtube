@@ -6,6 +6,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useSidebar } from "@/components/ui/sidebar"
+import Link from "next/link"
 
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar()
@@ -22,8 +23,10 @@ export function SiteHeader() {
           <Menu className="size-5" />
         </Button>
         <Separator orientation="vertical" className="mr-2 h-4" />
+        <Link href="/feed" className="flex items-center gap-2">
         <Youtube className="size-6 text-primary" />
         <span className="text-primary">UTUBE</span>
+        </Link>
         <div className="flex items-center gap-2 ml-auto">
           <Button variant="ghost" size="icon" className="rounded-xl">
             <Search className="size-4" />
