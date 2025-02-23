@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# YouTube Client
 
-## Getting Started
+A minimal, ad-free YouTube client built with Next.js and FastAPI. This project provides a clean and distraction-free YouTube viewing experience.
 
-First, run the development server:
+## 🌟 Features
+
+- 🚫 Ad-free YouTube experience
+- 🎯 Minimal and clean interface
+- 🔄 Video recommendations
+- 🎨 Modern, responsive design
+- 💨 Fast and efficient playback
+- 🔒 Secure cookie-based authentication
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Bun](https://bun.sh/) for frontend package management and development
+- [uv](https://astral.sh/uv) for Python package management
+- [Cookie Editor](https://github.com/Moustachauve/cookie-editor) browser extension
+- Python 3.8 or higher
+
+### Installation
+
+#### Frontend Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Install Bun (macOS & Linux)
+curl -fsSL https://bun.sh/install | bash
+
+# Install dependencies
+bun i
+
+# Start development server
+bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### Backend Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Navigate to backend directory
+cd backend
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Install uv package manager
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-## Learn More
+# Create and activate virtual environment
+uv venv
+source .venv/bin/activate
 
-To learn more about Next.js, take a look at the following resources:
+# Install Python dependencies
+uv pip install -r requirements.txt
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Start backend server
+uvicorn main:app
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Configuration
 
-## Deploy on Vercel
+1. Install the [Cookie Editor](https://github.com/Moustachauve/cookie-editor) extension in your browser
+2. Visit [YouTube](https://youtube.com)
+3. Open Cookie Editor and export cookies in Netscape format
+4. Navigate to `localhost:3000` in your browser
+5. When prompted, select "cookies" option and paste your YouTube cookies
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠️ Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Frontend
+- Next.js
+- TypeScript
+- Tailwind CSS
+- Bun package manager
+
+### Backend
+- FastAPI (Python)
+- Redis for caching
+- MongoDB for data storage
+- yt-dlp for YouTube integration
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to submit issues and enhancement requests.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## ⚠️ Disclaimer
+
+This project is for educational purposes only. Please ensure you comply with YouTube's terms of service when using this application.
+
+## 📝 License
+
+[MIT License](LICENSE)
+
+---
+Made with ❤️ by [S4tyendra](https://github.com/S4tyendra)
